@@ -1,3 +1,6 @@
+import { SALEORDER_PLACED_CHANNEL } from '../generals/constants';
+import { Context } from './context';
+
 type CreateSaleOrderAsyncArgs = {
   email: string;
   paymentMethod: 'cash' | 'cashless';
@@ -17,8 +20,18 @@ const resolvers = {
   Mutation: {
     createSaleOrderAsync: async (
       _root: any,
-      _args: CreateSaleOrderAsyncArgs,
+      args: CreateSaleOrderAsyncArgs,
+      ctx: Context,
     ) => {
+      await ctx.nats.sendMessage({
+        channel: SALEORDER_PLACED_CHANNEL,
+        message: {
+          email: args.email,
+          payment_method: args.paymentMethod,
+          products: args.products,
+        },
+      });
+
       return {
         message: 'OK',
       };

@@ -61,6 +61,17 @@ enum PaymentMethod {
   cashless
 }
 
+input CreateSaleOrderProductInput {
+  """
+  Name of the product (ex: `Pepsi`)
+  """
+  name: String!
+  """
+  Quantity of the product (ex: 5)
+  """
+  quantity: Int!
+}
+
 type Query {
   "A simple type for getting started!"
   hello: String
@@ -78,4 +89,24 @@ type Query {
     """
     id: Int!
   ): SaleOrder
+}
+
+type Mutation {
+  """
+  Create a SaleOrder request
+  """
+  createSaleOrder(
+    """
+    Email of the partner ordering the sales (ex: `john@doe.com`)
+    """
+    email: String!
+    """
+    Chosen method of payment (ex: `cash`)
+    """
+    paymentMethod: PaymentMethod!
+    """
+    Product to order
+    """
+    products: [CreateSaleOrderProductInput!]!
+  ): SaleOrder!
 }

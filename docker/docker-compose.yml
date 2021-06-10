@@ -12,6 +12,21 @@ services:
     networks:
       - app-network
 
+  nats-streaming-console:
+    image: kuali/nats-streaming-console:latest
+    container_name: nats-streaming-console
+    restart: unless-stopped
+    ports:
+      - "8282:8282"
+    # TODO: Adjust original image to allow environment override for docker-compose
+    # environment:
+    #   - STAN_URL=nats://nats-streaming-server:4222
+    #   - STAN_MONITOR_URL=http://nats-streaming-server:8222
+    depends_on:
+      - nats-streaming-server
+    networks:
+      - app-network
+
   graphql:
     build:
       context: ../graphql/

@@ -14,7 +14,7 @@
     "test-src": "jest --passWithNoTests --verbose",
     "typecheck": "tsc --pretty",
     "test": "npm run test-lint && npm run typecheck && npm run test-src",
-    "serve:watch": "nodemon src/main.ts -e js,ts,jsx,tsx,graphql -x babel-node --extensions .ts,.js"
+    "serve:watch": "BABEL_DISABLE_CACHE=1 nodemon src/main.ts -e js,ts,jsx,tsx,graphql -x babel-node --extensions .ts,.js"
   },
   "dependencies": {
     "apollo-server": "^2.25.1",

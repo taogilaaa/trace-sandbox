@@ -1,4 +1,81 @@
+"""
+DateTime string ISO 8601 formatted (ex: `2019-01-30T11:31:32.582Z`)
+"""
+scalar DateTime
+
+"""
+SaleOrder represents order from partners.
+"""
+type SaleOrder {
+  """
+  SaleOrder unique identifier (ex: `1`)
+  """
+  id: Int!
+  """
+  Email of the partner ordering the sales (ex: `john@doe.com`)
+  """
+  email: String!
+  """
+  Chosen method of payment (ex: `cash`)
+  """
+  paymentMethod: PaymentMethod!
+  """
+  Date of order received from partners (ex: `2019-01-30T11:31:32.582Z`)
+  """
+  orderDate: DateTime!
+  """
+  Purchased items inside a sale order
+  """
+  products: [Product!]!
+}
+
+"""
+Product represents available product list.
+"""
+type Product {
+  """
+  Name of the product (ex: `Pepsi`)
+  """
+  name: String!
+  """
+  Quantity of the product (ex: 5)
+  """
+  quantity: Int!
+}
+
+"""
+A connection to a list of SaleOrder values.
+"""
+type SaleOrderConnection {
+  """
+  A list of SaleOrder objects.
+  """
+  nodes: [SaleOrder]!
+}
+
+"""
+PaymentMethod represents available method of payment.
+"""
+enum PaymentMethod {
+  cash
+  cashless
+}
+
 type Query {
   "A simple type for getting started!"
   hello: String
+  """
+  Get all SaleOrders
+  """
+  saleOrders: SaleOrderConnection!
+
+  """
+  Get SaleOrder by id
+  """
+  saleOrder(
+    """
+    SaleOrder id
+    """
+    id: Int!
+  ): SaleOrder
 }

@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  nats-streaming-server:
+    image: nats-streaming:latest
+    container_name: nats-streaming-server
+    restart: unless-stopped
+    command: "-m 8222"
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    networks:
+      - app-network
+
+  graphql:
+    build:
+      context: ../graphql/
+      dockerfile: Dockerfile
+    image: graphql
+    container_name: graphql
+    restart: always
+    ports:
+      - "50040:50040"
+    environment:
+      - NATS_STREAMING_URL=nats://nats-streaming-server:4222
+    depends_on:
+      - nats-streaming-server
+    networks:
+      - app-network
+
+networks:
+  app-network:

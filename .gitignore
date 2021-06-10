@@ -1,0 +1,11 @@
+/lib
+npm-debug.log
+node_modules
+.env
+.build
+yarn-error.log
+.DS_Store
+.yarn
+coverage
+.vscode
+bin/**

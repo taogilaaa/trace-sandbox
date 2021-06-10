@@ -6,6 +6,7 @@ import (
 
 type ServerConfig struct {
 	AppName              string
+	AppVersion           string
 	NATSStreamingUrl     string
 	NATSStreamingCluster string
 }
@@ -26,6 +27,7 @@ func Load() ServerConfig {
 
 	return ServerConfig{
 		AppName:              serviceName,
+		AppVersion:           "1",
 		NATSStreamingUrl:     natsStreamingUrl,
 		NATSStreamingCluster: natsStreamingCluster,
 	}

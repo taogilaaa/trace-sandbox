@@ -16,8 +16,9 @@ func InitFromEnv(service, version string) (opentracing.Tracer, io.Closer) {
 		panic(fmt.Sprintf("ERROR: cannot init Jaeger: %v\n", err))
 	}
 
+	cfg.ServiceName = service
 	keyTag := fmt.Sprintf("%s.version", service)
-	tracer, closer, err := cfg.New(service, config.Logger(jaeger.StdLogger), config.Tag(keyTag, version), config.MaxTagValueLength(2048))
+	tracer, closer, err := cfg.NewTracer(config.Logger(jaeger.StdLogger), config.Tag(keyTag, version), config.MaxTagValueLength(2048))
 	if err != nil {
 		panic(fmt.Sprintf("ERROR: cannot init Jaeger: %v\n", err))
 	}

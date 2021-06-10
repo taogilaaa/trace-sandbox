@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package sandbox.sales.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service SaleOrderService {
+  rpc GetSaleOrder(GetSaleOrderRequest) returns (GetSaleOrderResponse);
+  rpc GetSaleOrders(GetSaleOrdersRequest) returns (GetSaleOrdersResponse);
+  rpc CreateSaleOrder(CreateSaleOrderRequest) returns (CreateSaleOrderResponse);
+}
+
+message GetSaleOrderRequest {
+  int32 id = 1;
+}
+
+message GetSaleOrderResponse {
+  SaleOrder sale_order = 1;
+}
+
+message GetSaleOrdersRequest {
+}
+
+message GetSaleOrdersResponse {
+  repeated SaleOrder sale_orders = 1;
+}
+
+message CreateSaleOrderRequest {
+  string email = 1;
+  string payment_method = 2;
+  repeated Product products = 3;
+}
+
+message CreateSaleOrderResponse {
+  SaleOrder sale_order = 1;
+}
+
+message SaleOrder {
+  int32 id = 1;
+  string email = 2;
+  string payment_method = 3;
+  google.protobuf.Timestamp order_date = 4;
+  repeated Product products = 5;
+}
+
+message Product {
+  string name = 1;
+  int32 quantity = 2;
+}
+

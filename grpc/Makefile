@@ -6,7 +6,7 @@ run:
 	@go run ./cmd/server/main.go
 
 serve:
-	set -a && . .env && make run
+	set -a && . ./.env && make run
 
 clean:
 	rm -rf ./bin

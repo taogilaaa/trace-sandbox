@@ -1,0 +1,31 @@
+{
+  "name": "graphql",
+  "version": "0.1.0",
+  "description": "graphql",
+  "main": "dist/main.js",
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
+  "scripts": {
+    "build": "babel src --ignore \"**/__tests__\" --out-dir dist --extensions .ts,.js",
+    "start": "npm run build && node ./dist/main.js",
+    "format": "prettier --write 'src/**/*.{js,ts}'",
+    "test-lint": "eslint 'src/**/*.{js,ts}'",
+    "test-src": "jest --passWithNoTests --verbose",
+    "typecheck": "tsc --pretty",
+    "test": "npm run test-lint && npm run typecheck && npm run test-src",
+    "serve:watch": "nodemon src/main.ts -e js,ts,jsx,tsx,graphql -x babel-node --extensions .ts,.js"
+  },
+  "dependencies": {
+    "apollo-server": "^2.25.1",
+    "graphql": "^15.5.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "@types/node": "^15.12.2",
+    "jest": "^27.0.4",
+    "jest-raw-loader": "^1.0.1",
+    "nodemon": "^2.0.7",
+    "tscripts": "^1.1.2"
+  }
+}

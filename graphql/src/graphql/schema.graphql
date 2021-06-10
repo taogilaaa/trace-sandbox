@@ -54,6 +54,13 @@ type SaleOrderConnection {
 }
 
 """
+Placeholder for asynchronous mutation
+"""
+type AsynchronousResult {
+  message: String!
+}
+
+"""
 PaymentMethod represents available method of payment.
 """
 enum PaymentMethod {
@@ -95,7 +102,7 @@ type Mutation {
   """
   Create a SaleOrder request
   """
-  createSaleOrder(
+  createSaleOrderAsync(
     """
     Email of the partner ordering the sales (ex: `john@doe.com`)
     """
@@ -108,5 +115,5 @@ type Mutation {
     Product to order
     """
     products: [CreateSaleOrderProductInput!]!
-  ): SaleOrder!
+  ): AsynchronousResult!
 }

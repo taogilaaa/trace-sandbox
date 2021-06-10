@@ -1,4 +1,4 @@
-type CreateSaleOrderArgs = {
+type CreateSaleOrderAsyncArgs = {
   email: string;
   paymentMethod: 'cash' | 'cashless';
   products: Array<{ name: string; quantity: string }>;
@@ -15,11 +15,12 @@ const resolvers = {
     },
   },
   Mutation: {
-    createSaleOrder: (_root: any, args: CreateSaleOrderArgs) => {
+    createSaleOrderAsync: async (
+      _root: any,
+      _args: CreateSaleOrderAsyncArgs,
+    ) => {
       return {
-        ...args,
-        id: 1,
-        orderDate: new Date().toISOString(),
+        message: 'OK',
       };
     },
   },

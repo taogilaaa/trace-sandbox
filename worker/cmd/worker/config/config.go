@@ -28,7 +28,7 @@ func Load() ServerConfig {
 
 	grpcUrl := "localhost:50041"
 	if value, ok := os.LookupEnv("GRPC_URL"); ok {
-		natsStreamingUrl = value
+		grpcUrl = value
 	}
 
 	return ServerConfig{

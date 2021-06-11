@@ -17,13 +17,17 @@
     "serve:watch": "BABEL_DISABLE_CACHE=1 nodemon src/main.ts -e js,ts,jsx,tsx,graphql -x babel-node --extensions .ts,.js"
   },
   "dependencies": {
+    "apollo-opentracing": "^1.4.2",
     "apollo-server": "^2.25.1",
     "dotenv": "^10.0.0",
     "graphql": "^15.5.0",
+    "jaeger-client": "^3.18.1",
     "node-nats-streaming": "^0.3.2",
+    "opentracing": "^0.14.5",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/jaeger-client": "^3.18.0",
     "@types/jest": "^26.0.23",
     "@types/node": "^15.12.2",
     "@types/uuid": "^8.3.0",

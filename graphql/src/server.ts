@@ -1,4 +1,5 @@
 import { ApolloServer } from 'apollo-server';
+import { tracerExtension } from './extensions/tracer';
 import { makeContext } from './graphql/context';
 import { schema } from './graphql/schema';
 
@@ -13,6 +14,7 @@ const server = new ApolloServer({
       'schema.polling.enable': false,
     } as any,
   },
+  extensions: [tracerExtension],
 });
 
 export { server };

@@ -9,6 +9,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"github.com/taogilaaa/trace-sandbox/grpc/cmd/server/config"
+	"github.com/taogilaaa/trace-sandbox/grpc/internal/database"
 	"github.com/taogilaaa/trace-sandbox/grpc/internal/log"
 	"github.com/taogilaaa/trace-sandbox/grpc/internal/proto/sandbox_sales_v1"
 	"github.com/taogilaaa/trace-sandbox/grpc/internal/tracing"
@@ -41,7 +42,13 @@ func main() {
 	defer closer.Close()
 	opentracing.SetGlobalTracer(tracer)
 
-	saleorderGrpc := saleorder.NewGRPCServer()
+	dataStore := database.New(cfg.Database, database.DriverPostgres)
+	defer dataStore.GetPrimary().Close()
+	defer dataStore.GetReplica().Close()
+
+	saleorderRepository := saleorder.NewPostgresRepository(dataStore, logger)
+	saleorderService := saleorder.NewService(saleorderRepository, logger)
+	saleorderGrpc := saleorder.NewGRPCServer(logger, saleorderService)
 
 	grpcTracingOption := otgrpc.IncludingSpans(
 		func(parentSpanCtx opentracing.SpanContext, method string, req, resp interface{}) bool {

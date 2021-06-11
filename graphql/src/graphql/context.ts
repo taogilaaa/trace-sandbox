@@ -1,5 +1,9 @@
 import { sendMessage } from '../generals/nats';
 import { v4 as uuid } from 'uuid';
+import {
+  getSaleOrder,
+  getSaleOrders,
+} from '../repositories/grpc/saleOrderRepository';
 
 export type Context = ReturnType<typeof makeContext>;
 
@@ -12,6 +16,10 @@ function makeContext() {
     },
     nats: {
       sendMessage,
+    },
+    grpc: {
+      getSaleOrder,
+      getSaleOrders,
     },
     requestId,
   };

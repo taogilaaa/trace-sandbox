@@ -14,6 +14,7 @@
     "test-src": "jest --passWithNoTests --verbose",
     "typecheck": "tsc --pretty",
     "test": "npm run test-lint && npm run typecheck && npm run test-src",
+    "grpcgen": "./scripts/grpcgen.sh",
     "serve:watch": "BABEL_DISABLE_CACHE=1 nodemon src/main.ts -e js,ts,jsx,tsx,graphql -x babel-node --extensions .ts,.js"
   },
   "dependencies": {
@@ -21,20 +22,24 @@
     "apollo-server": "^2.25.1",
     "dotenv": "^10.0.0",
     "graphql": "^15.5.0",
+    "grpc": "^1.24.10",
     "jaeger-client": "^3.18.1",
     "node-nats-streaming": "^0.3.2",
     "opentracing": "^0.14.5",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/google-protobuf": "^3.15.2",
     "@types/jaeger-client": "^3.18.0",
     "@types/jest": "^26.0.23",
     "@types/node": "^15.12.2",
     "@types/uuid": "^8.3.0",
     "babel-plugin-inline-import": "^3.0.0",
+    "grpc-tools": "^1.11.1",
     "jest": "^27.0.4",
     "jest-raw-loader": "^1.0.1",
     "nodemon": "^2.0.7",
+    "ts-protoc-gen": "^0.15.0",
     "tscripts": "^1.1.2"
   }
 }

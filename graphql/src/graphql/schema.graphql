@@ -85,7 +85,7 @@ type Query {
   """
   Get all SaleOrders
   """
-  saleOrders: SaleOrderConnection!
+  saleOrders(email: String): SaleOrderConnection!
 
   """
   Get SaleOrder by id

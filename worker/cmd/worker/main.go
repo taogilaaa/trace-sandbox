@@ -6,13 +6,16 @@ import (
 	"os/signal"
 
 	"github.com/google/uuid"
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/nats-io/stan.go"
 	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"github.com/taogilaaa/trace-sandbox/worker/cmd/worker/config"
 	"github.com/taogilaaa/trace-sandbox/worker/internal/log"
+	"github.com/taogilaaa/trace-sandbox/worker/internal/proto/sandbox_sales_v1"
 	"github.com/taogilaaa/trace-sandbox/worker/internal/tracing"
 	"github.com/taogilaaa/trace-sandbox/worker/pkg/placed"
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -48,7 +51,22 @@ func main() {
 
 	logger.Bg().Info("Connected to stan")
 
-	pWorker := placed.NewWorker(sc, logger)
+	conn, err := grpc.Dial(
+		cfg.GRPCUrl,
+		grpc.WithInsecure(),
+		grpc.WithUnaryInterceptor(
+			otgrpc.OpenTracingClientInterceptor(tracer)),
+		grpc.WithStreamInterceptor(
+			otgrpc.OpenTracingStreamClientInterceptor(tracer)),
+	)
+	if err != nil {
+		logger.Bg().WithError(err).Fatal(fmt.Sprintf("error connecting to grpc: %s", err))
+	}
+	defer conn.Close()
+
+	saleOrderClient := sandbox_sales_v1.NewSaleOrderServiceClient(conn)
+	pService := placed.NewService(logger, saleOrderClient)
+	pWorker := placed.NewWorker(sc, logger, pService)
 	pSubscription, err := pWorker.Run()
 	if err != nil {
 		sc.Close()

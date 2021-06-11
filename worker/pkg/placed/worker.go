@@ -12,14 +12,20 @@ import (
 	"github.com/taogilaaa/trace-sandbox/worker/internal/log"
 )
 
+// Service provides business logic access.
+type Service interface {
+	// CreateSaleOrder is used to create a new SaleOrder.
+	CreateSaleOrder(ctx context.Context, saleOrder IncomingMessage) error
+}
 type worker struct {
 	sc     stan.Conn
 	logger log.Factory
+	s      Service
 }
 
 // NewWorker returns a saleorder placed worker.
-func NewWorker(sc stan.Conn, logger log.Factory) *worker {
-	return &worker{sc, logger}
+func NewWorker(sc stan.Conn, logger log.Factory, service Service) *worker {
+	return &worker{sc, logger, service}
 }
 
 // Run connects and execute worker to NATS server.
@@ -45,6 +51,12 @@ func (w *worker) Run() (stan.Subscription, error) {
 		so := IncomingMessage{}
 		if err := json.Unmarshal(m.Data, &so); err != nil {
 			logger.WithError(err).Error("Json Unmarshal Error")
+			return
+		}
+
+		err := w.s.CreateSaleOrder(ctx, so)
+		if err != nil {
+			logger.WithError(err).Error("CreateSaleOrder Error")
 			return
 		}
 

@@ -9,6 +9,7 @@ type ServerConfig struct {
 	AppVersion           string
 	NATSStreamingUrl     string
 	NATSStreamingCluster string
+	GRPCUrl              string
 }
 
 func Load() ServerConfig {
@@ -25,10 +26,16 @@ func Load() ServerConfig {
 		natsStreamingCluster = value
 	}
 
+	grpcUrl := "localhost:50041"
+	if value, ok := os.LookupEnv("GRPC_URL"); ok {
+		natsStreamingUrl = value
+	}
+
 	return ServerConfig{
 		AppName:              serviceName,
 		AppVersion:           "1",
 		NATSStreamingUrl:     natsStreamingUrl,
 		NATSStreamingCluster: natsStreamingCluster,
+		GRPCUrl:              grpcUrl,
 	}
 }

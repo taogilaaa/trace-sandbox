@@ -18,4 +18,4 @@ test:
 	@go test ./...
 
 grpcgen:
-	protoc -I ./api/protobuf-spec sandbox_sales_v1.proto --go_out=plugins=grpc:./internal/proto/sandbox_sales_v1
+	protoc -I ../api/protobuf-spec sandbox_sales_v1.proto --go_out=plugins=grpc:./internal/proto/sandbox_sales_v1

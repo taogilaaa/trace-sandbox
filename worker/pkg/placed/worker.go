@@ -10,6 +10,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	"github.com/taogilaaa/trace-sandbox/worker/internal/log"
+	"github.com/taogilaaa/trace-sandbox/worker/internal/tracing"
 )
 
 // Service provides business logic access.
@@ -31,8 +32,10 @@ func NewWorker(sc stan.Conn, logger log.Factory, service Service) *worker {
 // Run connects and execute worker to NATS server.
 func (w *worker) Run() (stan.Subscription, error) {
 	subscription, err := w.sc.QueueSubscribe(NatsChannel, NatsQueueGroup, func(m *stan.Msg) {
+		spanCtx, _ := tracing.ExtractSpanFromJSONNats(m.Data)
 		span := opentracing.StartSpan(
 			fmt.Sprintf("%s.subscription", NatsQueueGroup),
+			opentracing.ChildOf(spanCtx),
 			ext.SpanKindConsumer,
 			opentracing.Tag{Key: string(ext.Component), Value: "worker"},
 			opentracing.Tag{Key: string(ext.MessageBusDestination), Value: NatsChannel},

@@ -86,6 +86,7 @@ services:
       - NATS_URL=nats://nats-streaming-server:4222
       - NATS_CLUSTER=test-cluster
       - GRPC_URL=grpc:50041
+      - JAEGER_AGENT_HOST=jaeger
       - JAEGER_SAMPLER_PARAM=1
       - JAEGER_SAMPLER_TYPE=const
     depends_on:

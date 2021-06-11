@@ -19,6 +19,7 @@ message GetSaleOrderResponse {
 }
 
 message GetSaleOrdersRequest {
+  string email = 1;
 }
 
 message GetSaleOrdersResponse {

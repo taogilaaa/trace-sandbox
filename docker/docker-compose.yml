@@ -52,6 +52,27 @@ services:
     networks:
       - app-network
 
+  grpc:
+    build:
+      context: ../grpc/
+      dockerfile: Dockerfile
+    image: grpc
+    container_name: grpc
+    restart: always
+    ports:
+      - "50041:50041"
+    environment:
+      - DB_PRIMARY_DSN=host=postgres port=5432 user=root dbname=root password=root sslmode=disable
+      - DB_REPLICA_DSN=host=postgres port=5432 user=root dbname=root password=root sslmode=disable
+      - JAEGER_AGENT_HOST=jaeger
+      - JAEGER_SAMPLER_PARAM=1
+      - JAEGER_SAMPLER_TYPE=const
+    depends_on:
+      - postgres
+      - jaeger
+    networks:
+      - app-network
+
   graphql:
     build:
       context: ../graphql/
@@ -62,9 +83,35 @@ services:
     ports:
       - "50040:50040"
     environment:
-      - NATS_STREAMING_URL=nats://nats-streaming-server:4222
+      - NATS_URL=nats://nats-streaming-server:4222
+      - NATS_CLUSTER=test-cluster
+      - GRPC_URL=grpc:50041
+      - JAEGER_SAMPLER_PARAM=1
+      - JAEGER_SAMPLER_TYPE=const
     depends_on:
       - nats-streaming-server
+      - grpc
+    networks:
+      - app-network
+
+  worker:
+    build:
+      context: ../worker/
+      dockerfile: Dockerfile
+    image: worker
+    container_name: worker
+    restart: always
+    environment:
+      - NATS_STREAMING_URL=nats://nats-streaming-server:4222
+      - NATS_CLUSTER=test-cluster
+      - GRPC_URL=grpc:50041
+      - JAEGER_AGENT_HOST=jaeger
+      - JAEGER_SAMPLER_PARAM=1
+      - JAEGER_SAMPLER_TYPE=const
+    depends_on:
+      - jaeger
+      - nats-streaming-server
+      - grpc
     networks:
       - app-network
 

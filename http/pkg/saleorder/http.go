@@ -44,7 +44,7 @@ func (hs *httpServer) SaleOrder(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	jsonMessage, err := json.Marshal(response)
+	jsonMessage, err := json.Marshal(response.SaleOrder)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -71,7 +71,7 @@ func (hs *httpServer) GetSaleOrders(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	jsonMessage, err := json.Marshal(response)
+	jsonMessage, err := json.Marshal(response.SaleOrders)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

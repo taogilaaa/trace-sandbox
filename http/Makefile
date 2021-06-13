@@ -1,4 +1,4 @@
-.PHONY: run serve clean deploy test
+.PHONY: run serve clean deploy test grpcgen
 
 export GO111MODULE=on
 
@@ -16,3 +16,6 @@ install:
 
 test:
 	@go test ./...
+
+grpcgen:
+	protoc -I ../api/protobuf-spec sandbox_sales_v1.proto --go_out=plugins=grpc:./internal/proto/sandbox_sales_v1

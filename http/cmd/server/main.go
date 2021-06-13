@@ -7,6 +7,7 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/opentracing/opentracing-go"
+	"github.com/rs/cors"
 	"github.com/taogilaaa/trace-sandbox/http/cmd/server/config"
 	"github.com/taogilaaa/trace-sandbox/http/internal/proto/sandbox_sales_v1"
 	"github.com/taogilaaa/trace-sandbox/http/internal/stan"
@@ -39,9 +40,12 @@ func main() {
 	stanClient := stan.New(cfg.AppName, cfg.NATSStreamingCluster, cfg.NATSStreamingUrl)
 	httpServer := saleorder.NewHTTPServer(saleOrderClient, stanClient)
 
-	http.HandleFunc("/hello", httpServer.Hello)
-	http.HandleFunc("/saleorders", httpServer.SaleOrders)
-	http.HandleFunc("/saleorders/", httpServer.SaleOrder)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/hello", httpServer.Hello)
+	mux.HandleFunc("/saleorders", httpServer.SaleOrders)
+	mux.HandleFunc("/saleorders/", httpServer.SaleOrder)
 
-	http.ListenAndServe(":50042", nil)
+	handler := cors.Default().Handler(mux)
+
+	http.ListenAndServe(":50042", handler)
 }

@@ -8,6 +8,7 @@ const server = new ApolloServer({
   context: () => {
     return makeContext();
   },
+  introspection: true,
   playground: {
     settings: {
       // Disable auto refresh on graphql playground

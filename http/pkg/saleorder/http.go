@@ -9,6 +9,7 @@ import (
 	"path"
 	"strconv"
 
+	"github.com/opentracing/opentracing-go"
 	"github.com/taogilaaa/trace-sandbox/http/internal/proto/sandbox_sales_v1"
 )
 
@@ -30,12 +31,15 @@ func (hs *httpServer) Hello(w http.ResponseWriter, req *http.Request) {
 }
 
 func (hs *httpServer) SaleOrder(w http.ResponseWriter, req *http.Request) {
+	span, ctx := opentracing.StartSpanFromContext(context.Background(), "http.SaleOrder")
+	defer span.Finish()
+
 	saleOrderID := int32(0)
 	if value, err := strconv.Atoi(path.Base(req.URL.Path)); err == nil {
 		saleOrderID = int32(value)
 	}
 
-	response, err := hs.sosc.GetSaleOrder(context.Background(), &sandbox_sales_v1.GetSaleOrderRequest{Id: saleOrderID})
+	response, err := hs.sosc.GetSaleOrder(ctx, &sandbox_sales_v1.GetSaleOrderRequest{Id: saleOrderID})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -58,8 +62,11 @@ func (hs *httpServer) SaleOrders(w http.ResponseWriter, req *http.Request) {
 }
 
 func (hs *httpServer) GetSaleOrders(w http.ResponseWriter, req *http.Request) {
+	span, ctx := opentracing.StartSpanFromContext(context.Background(), "http.GetSaleOrders")
+	defer span.Finish()
+
 	email := req.URL.Query().Get("email")
-	response, err := hs.sosc.GetSaleOrders(context.Background(), &sandbox_sales_v1.GetSaleOrdersRequest{Email: email})
+	response, err := hs.sosc.GetSaleOrders(ctx, &sandbox_sales_v1.GetSaleOrdersRequest{Email: email})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -73,6 +80,9 @@ func (hs *httpServer) GetSaleOrders(w http.ResponseWriter, req *http.Request) {
 }
 
 func (hs *httpServer) CreateSaleOrders(w http.ResponseWriter, req *http.Request) {
+	span, ctx := opentracing.StartSpanFromContext(context.Background(), "http.CreateSaleOrders")
+	defer span.Finish()
+
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -84,7 +94,7 @@ func (hs *httpServer) CreateSaleOrders(w http.ResponseWriter, req *http.Request)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	err = hs.m.SendMessage(context.Background(), NatsChannel, newSaleOrder)
+	err = hs.m.SendMessage(ctx, NatsChannel, newSaleOrder)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

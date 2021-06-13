@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"path"
 	"strconv"
@@ -11,13 +12,17 @@ import (
 	"github.com/taogilaaa/trace-sandbox/http/internal/proto/sandbox_sales_v1"
 )
 
+type Messager interface {
+	SendMessage(ctx context.Context, channel string, message interface{}) error
+}
 type httpServer struct {
 	sosc sandbox_sales_v1.SaleOrderServiceClient
+	m    Messager
 }
 
 // NewHTTPServer creates a http server request handler.
-func NewHTTPServer(soClient sandbox_sales_v1.SaleOrderServiceClient) *httpServer {
-	return &httpServer{soClient}
+func NewHTTPServer(soClient sandbox_sales_v1.SaleOrderServiceClient, messager Messager) *httpServer {
+	return &httpServer{soClient, messager}
 }
 
 func (hs *httpServer) Hello(w http.ResponseWriter, req *http.Request) {
@@ -44,6 +49,15 @@ func (hs *httpServer) SaleOrder(w http.ResponseWriter, req *http.Request) {
 }
 
 func (hs *httpServer) SaleOrders(w http.ResponseWriter, req *http.Request) {
+	if req.Method == http.MethodPost {
+		hs.CreateSaleOrders(w, req)
+		return
+	}
+
+	hs.GetSaleOrders(w, req)
+}
+
+func (hs *httpServer) GetSaleOrders(w http.ResponseWriter, req *http.Request) {
 	email := req.URL.Query().Get("email")
 	response, err := hs.sosc.GetSaleOrders(context.Background(), &sandbox_sales_v1.GetSaleOrdersRequest{Email: email})
 	if err != nil {
@@ -56,4 +70,24 @@ func (hs *httpServer) SaleOrders(w http.ResponseWriter, req *http.Request) {
 	}
 
 	fmt.Fprintf(w, string(jsonMessage))
+}
+
+func (hs *httpServer) CreateSaleOrders(w http.ResponseWriter, req *http.Request) {
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	var newSaleOrder CreateSaleOrder
+	err = json.Unmarshal(body, &newSaleOrder)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	err = hs.m.SendMessage(context.Background(), NatsChannel, newSaleOrder)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	fmt.Fprintf(w, "order placed")
 }

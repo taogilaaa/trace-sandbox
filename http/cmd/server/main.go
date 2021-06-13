@@ -7,6 +7,7 @@ import (
 
 	"github.com/taogilaaa/trace-sandbox/http/cmd/server/config"
 	"github.com/taogilaaa/trace-sandbox/http/internal/proto/sandbox_sales_v1"
+	"github.com/taogilaaa/trace-sandbox/http/internal/stan"
 	"github.com/taogilaaa/trace-sandbox/http/pkg/saleorder"
 	"google.golang.org/grpc"
 )
@@ -24,7 +25,8 @@ func main() {
 	defer conn.Close()
 
 	saleOrderClient := sandbox_sales_v1.NewSaleOrderServiceClient(conn)
-	httpServer := saleorder.NewHTTPServer(saleOrderClient)
+	stanClient := stan.New(cfg.AppName, cfg.NATSStreamingCluster, cfg.NATSStreamingUrl)
+	httpServer := saleorder.NewHTTPServer(saleOrderClient, stanClient)
 
 	http.HandleFunc("/hello", httpServer.Hello)
 	http.HandleFunc("/saleorders", httpServer.SaleOrders)

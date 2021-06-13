@@ -5,6 +5,9 @@ go 1.16
 require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.0 // indirect
 	github.com/golang/protobuf v1.5.2
+	github.com/google/uuid v1.1.2
+	github.com/nats-io/nats-streaming-server v0.22.0 // indirect
+	github.com/nats-io/stan.go v0.9.0
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/uber/jaeger-client-go v2.29.1+incompatible

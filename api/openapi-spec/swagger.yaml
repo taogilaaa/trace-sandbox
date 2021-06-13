@@ -1,0 +1,119 @@
+openapi: 3.0.0
+
+info:
+  title: Trace Sandbox
+  description: Trace Sandbox REST API Documentation
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:50042
+    description: Local Server
+
+paths:
+  /saleorders/{saleOrderId}:
+    get:
+      summary: Get SaleOrder By Id
+      description: Get SaleOrder By Id
+      parameters:
+        - in: path
+          name: saleOrderId
+          schema:
+            type: integer
+            example: 1
+          required: true
+          description: Id of sale order
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SaleOrder"
+
+  /saleorders:
+    get:
+      summary: Returns a list of saleorders.
+      description: Returns all registered saleorders
+      parameters:
+        - in: query
+          name: email
+          description: Filter by exact email
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SaleOrder"
+    post:
+      summary: Create SaleOrder
+      description: Create SaleOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: john@doe.com
+                payment_method:
+                  type: string
+                  example: cash
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: Pepsi
+                      quantity:
+                        type: integer
+                        example: 5
+              required:
+                - email
+                - payment_method
+                - products
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: order placed
+
+components:
+  schemas:
+    SaleOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        email:
+          type: string
+          example: michaelsuyama@northwind.com
+        payment_method:
+          type: string
+          example: cash
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/Products"
+
+    Products:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Pepsi
+        quantity:
+          type: integer
+          example: 1

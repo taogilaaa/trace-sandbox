@@ -1,16 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
+
+	"github.com/taogilaaa/trace-sandbox/http/pkg/saleorder"
 )
 
-func hello(w http.ResponseWriter, req *http.Request) {
-
-	fmt.Fprintf(w, "hello\n")
-}
-
 func main() {
-	http.HandleFunc("/hello", hello)
+	httpServer := saleorder.NewHTTPServer()
+
+	http.HandleFunc("/hello", httpServer.Hello)
+
 	http.ListenAndServe(":50042", nil)
 }
